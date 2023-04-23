@@ -1,4 +1,5 @@
-from Pawn import Pawn
+# from Pawn import Pawn
+# from Queen import Queen
 
 WHITE = 1
 BLACK = 2
@@ -59,14 +60,209 @@ def correct_coords(row, col):
     return 0 <= row < 8 and 0 <= col < 8
 
 
+class Rook:  # Ладья
+
+    def __init__(self, row, col, color):
+        self.row = row
+        self.col = col
+        self.color = color
+
+    def set_position(self, row, col):
+        self.row = row
+        self.col = col
+
+    def char(self):
+        return 'R'
+
+    def get_color(self):
+        return self.color
+
+    def can_move(self, row, col):
+        # Невозможно сделать ход в клетку, которая не лежит в том же ряду
+        # или столбце клеток.
+        if self.row != row and self.col != col:
+            return False
+
+        return True
+
+
+class King:
+    def __init__(self, row, col, color):
+        self.row = row
+        self.col = col
+        self.color = color
+
+    def set_position(self, row, col):
+        self.row = row
+        self.col = col
+
+    def char(self):
+        return 'K'
+
+    def get_color(self):
+        return self.color
+
+    # Возвращает None, если путь невозможен и список клеток, если возможен
+    def can_move(self, row, col):
+        if row < 0 or row > 7 or col < 0 or col > 7:
+            return None
+        if (self.row + 1 == row or self.row - 1 == row or self.row == row) and \
+                (self.col + 1 == col or self.col - 1 == col or self.col == col):
+            return [row, col]
+
+
+class Bishop:  # Слон
+    def __init__(self, row, col, color):
+        self.row = row
+        self.col = col
+        self.color = color
+
+    def set_position(self, row, col):
+        self.row = row
+        self.col = col
+
+    def char(self):
+        return 'B'
+
+    def get_color(self):
+        return self.color
+
+    def can_move(self, row, col):
+        if row < 0 or row > 7 or col < 0 or col > 7:
+            return False
+        dx = abs(self.row - row)
+        dy = abs(self.col - col)
+        return dx == dy
+
+
+class Pawn:  # Пешка
+    def __init__(self, row, col, color):
+        self.row = row
+        self.col = col
+        self.color = color
+
+    def set_position(self, row, col):
+        self.row = row
+        self.col = col
+
+    def char(self):
+        return 'P'
+
+    def get_color(self):
+        return self.color
+
+    def can_move(self, row, col):
+        # Пешка может ходить только по вертикали
+        # "взятие на проходе" не реализовано
+        if self.col != col:
+            return False
+
+        # Пешка может сделать из начального положения ход на 2 клетки
+        # вперёд, поэтому поместим индекс начального ряда в start_row.
+        if self.color == WHITE:
+            direction = 1
+            start_row = 1
+        else:
+            direction = -1
+            start_row = 6
+
+        # ход на 1 клетку
+        if self.row + direction == row:
+            return True
+
+        # ход на 2 клетки из начального положения
+        if self.row == start_row and self.row + 2 * direction == row:
+            return True
+
+        return False
+
+
+class Queen:  # Ферзь
+    def __init__(self, row, col, color):
+        self.row = row
+        self.col = col
+        self.color = color
+
+    def set_position(self, row, col):
+        self.row = row
+        self.col = col
+
+    def char(self):
+        return 'Q'
+
+    def get_color(self):
+        return self.color
+
+    def can_move(self, row, col):
+        if row < 0 or row > 7 or col < 0 or col > 7:
+            return False
+        dx = abs(self.row - row)
+        dy = abs(self.col - col)
+        return dx == dy or (dx == 0 and dy > 0) or (dx > 0 and dy == 0)
+
+
+class Knight:  # Конь
+    def __init__(self, row, col, color):
+        self.row = row
+        self.col = col
+        self.color = color
+
+    def set_position(self, row, col):
+        self.row = row
+        self.col = col
+
+    def char(self):
+        return 'N'
+
+    def get_color(self):
+        return self.color
+
+    def can_move(self, row, col):
+        if row < 0 or row > 7 or col < 0 or col > 7:
+            return False
+        dx = abs(self.row - row)
+        dy = abs(self.col - col)
+        return dx + dy == 3 and (dx == 1 or dy == 1)
+
+
 class Board:
     def __init__(self):
         self.color = WHITE
         self.field = []
         for row in range(8):
             self.field.append([None] * 8)
-        # Пешка белого цвета в клетке E2.
+        self.field[0][0] = Rook(0, 0, WHITE)
+        self.field[0][1] = Knight(0, 1, WHITE)
+        self.field[0][2] = Bishop(0, 2, WHITE)
+        self.field[0][3] = Queen(0, 3, WHITE)
+        self.field[0][4] = King(0, 4, WHITE)
+        self.field[0][5] = Bishop(0, 5, WHITE)
+        self.field[0][6] = Knight(0, 6, WHITE)
+        self.field[0][7] = Rook(0, 7, WHITE)
+        self.field[1][0] = Pawn(1, 0, WHITE)
+        self.field[1][1] = Pawn(1, 1, WHITE)
+        self.field[1][2] = Pawn(1, 2, WHITE)
+        self.field[1][3] = Pawn(1, 3, WHITE)
         self.field[1][4] = Pawn(1, 4, WHITE)
+        self.field[1][5] = Pawn(1, 5, WHITE)
+        self.field[1][6] = Pawn(1, 6, WHITE)
+        self.field[1][7] = Pawn(1, 7, WHITE)
+        self.field[7][0] = Rook(7, 0, BLACK)
+        self.field[7][1] = Knight(7, 1, BLACK)
+        self.field[7][2] = Bishop(7, 2, BLACK)
+        self.field[7][3] = Queen(7, 3, BLACK)
+        self.field[7][4] = King(7, 4, BLACK)
+        self.field[7][5] = Bishop(7, 5, BLACK)
+        self.field[7][6] = Knight(7, 6, BLACK)
+        self.field[7][7] = Rook(7, 7, BLACK)
+        self.field[6][0] = Pawn(6, 0, BLACK)
+        self.field[6][1] = Pawn(6, 1, BLACK)
+        self.field[6][2] = Pawn(6, 2, BLACK)
+        self.field[6][3] = Pawn(6, 3, BLACK)
+        self.field[6][4] = Pawn(6, 4, BLACK)
+        self.field[6][5] = Pawn(6, 5, BLACK)
+        self.field[6][6] = Pawn(6, 6, BLACK)
+        self.field[6][7] = Pawn(6, 7, BLACK)
 
     def current_player_color(self):
         return self.color
@@ -104,6 +300,17 @@ class Board:
         self.color = opponent(self.color)
         return True
 
+    def is_under_attack(self, row, col, color):
+        for i in range(len(self.field)):
+            for j in range(len(self.field[i])):
+                f = self.field[i][j]
+                if f is not None and f.get_color() == color and f.can_move(row, col):
+                    return True
+
+                # return self.field[i][j] is not None and self.field[i][j].get_color() == color and \
+                #     self.field[i][j].can_move(row, col)
+
+        return False
 
 
 main()
