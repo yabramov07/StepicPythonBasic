@@ -198,7 +198,19 @@ class Queen:  # Ферзь
             return False
         dx = abs(self.row - row)
         dy = abs(self.col - col)
-        return dx == dy or (dx == 0 and dy > 0) or (dx > 0 and dy == 0)
+        if dx == dy or (dx == 0 and dy > 0) or (dx > 0 and dy == 0):
+            x = self.row
+            y = self.col
+            data = []
+            while x != 8:
+                data.append([x, y])
+                x += 1
+                if x == 7 and [row, col] in data:
+                    return data
+                elif x == 7 and [row, col] not in data:
+                    data = []
+        else:
+            return None
 
 
 class Knight:  # Конь
