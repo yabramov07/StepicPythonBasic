@@ -1,21 +1,11 @@
-# import Bishop
+from Chess import *
 
-from chess import Bishop
-
-WHITE=1
-BLACK=2
-
-row0 = 4
-col0 = 5
-bishop = Bishop(row0, col0, BLACK)
-
-print('white' if bishop.get_color() == WHITE else 'black')
-for row in range(7, -1, -1):
-    for col in range(8):
-        if row == row0 and col == col0:
-            print(bishop.char(), end='')
-        elif bishop.can_move(row, col):
-            print('x', end='')
-        else:
-            print('-', end='')
-    print()
+board = Board()
+board.move_piece(1, 1, 3, 1) #Белая пешка на две клетки вперед
+board.move_piece(6, 1, 4, 1) #Черная пешка на две клетки на встречу
+print(board)
+board.move_piece(0, 2, 2, 0) #Белый слон (Bishop) влево
+if board.move_piece(4, 1, 3, 1): #Черная пешка на место белой, типо съела
+    print(board)
+else:
+    print('Error')
