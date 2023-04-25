@@ -319,10 +319,17 @@ class Board:
                 if f is not None and f.get_color() == color and f.can_move(row, col):
                     return True
 
-                # return self.field[i][j] is not None and self.field[i][j].get_color() == color and \
-                #     self.field[i][j].can_move(row, col)
-
         return False
 
+    def __str__(self):
+        lines = ['     +----+----+----+----+----+----+----+----+']
+        for row in range(7, -1, -1):
+            line = '  ' + str(row) + '  '
+            for col in range(8):
+                line += '| ' + self.cell(row, col) + ' '
+            lines.append(line + '|')
+            lines.append('     +----+----+----+----+----+----+----+----+')
+        lines.append('        ' + '    '.join([str(col) for col in range(8)]))
 
-main()
+        return '\n'.join(lines)
+
