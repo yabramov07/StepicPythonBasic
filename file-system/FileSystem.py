@@ -1,8 +1,7 @@
-
 class File:
     def __init__(self, name, isDir=False):
         self.name = name
-        self.isDir = isDir # это папка или файл
+        self.isDir = isDir  # это папка или файл
 
     def get_name(self):
         return self.name
