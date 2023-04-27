@@ -269,7 +269,7 @@ class Queen:  # Ферзь
                         return False
 
                     # если это последняя клетка
-                    if i == len(path) -1:
+                    if i == len(path) - 1:
                         if piece:
                             # проверяем что фигуру на последней клетке можно съесть
                             return piece.get_color() != self.color

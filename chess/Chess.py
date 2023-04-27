@@ -54,6 +54,82 @@ def main():
             print('Координаты некорректы! Попробуйте другой ход!')
 
 
+def ray_1(x, y, row, col):
+    data = []
+    while y != 7:
+        y += 1
+        data.append([x, y])
+        if y == 7 and [row, col] in data:
+            return data
+
+
+def ray_2(x, y, row, col):
+    data = []
+    while x != 7 and y != 7:
+        x += 1
+        y += 1
+        data.append([x, y])
+        if y == 7 and x == 7 and [row, col] in data:
+            return data
+
+
+def ray_3(x, y, row, col):
+    data = []
+    while x != 7:
+        x += 1
+        data.append([x, y])
+        if x == 7 and [row, col] in data:
+            return data
+
+
+def ray_4(x, y, row, col):
+    data = []
+    while x == 7 and y == 0:
+        x += 1
+        y -= 1
+        data.append([x, y])
+        if x == 7 and y == 0 and [row, col] in data:
+            return data
+
+
+def ray_5(x, y, row, col):
+    data = []
+    while y == 0:
+        y -= 1
+        data.append([x, y])
+        if y == 0 and [row, col] in data:
+            return data
+
+
+def ray_6(x, y, row, col):
+    data = []
+    while x == 0 and y == 0:
+        x -= 1
+        y -= 1
+        data.append([x, y])
+        if x == 0 and y == 0 and [row, col] in data:
+            return data
+
+
+def ray_7(x, y, row, col):
+    data = []
+    while x == 0:
+        x -= 1
+        data.append([x, y])
+        if x == 0 and [row, col] in data:
+            return data
+
+
+def ray_8(x, y, row, col):
+    data = []
+    while x == 0 and y == 7:
+        x -= 1
+        y += 1
+        data.append([x, y])
+        if x == 0 and y == 7 and [row, col] in data:
+            return data
+
+
 def correct_coords(row, col):
     """Функция проверяет, что координаты (row, col) лежат
     внутри доски"""
@@ -199,16 +275,22 @@ class Queen:  # Ферзь
         dx = abs(self.row - row)
         dy = abs(self.col - col)
         if dx == dy or (dx == 0 and dy > 0) or (dx > 0 and dy == 0):
-            x = self.row
-            y = self.col
-            data = []
-            while x != 8:
-                data.append([x, y])
-                x += 1
-                if x == 7 and [row, col] in data:
-                    return data
-                elif x == 7 and [row, col] not in data:
-                    data = []
+            if ray_1(self.row, self.col, row, col):
+                return ray_1(self.row, self.col, row, col)
+            elif ray_2(self.row, self.col, row, col):
+                return ray_2(self.row, self.col, row, col)
+            elif ray_3(self.row, self.col, row, col):
+                return ray_3(self.row, self.col, row, col)
+            elif ray_4(self.row, self.col, row, col):
+                return ray_4(self.row, self.col, row, col)
+            elif ray_5(self.row, self.col, row, col):
+                return ray_5(self.row, self.col, row, col)
+            elif ray_6(self.row, self.col, row, col):
+                return ray_6(self.row, self.col, row, col)
+            elif ray_7(self.row, self.col, row, col):
+                return ray_7(self.row, self.col, row, col)
+            elif ray_8(self.row, self.col, row, col):
+                return ray_8(self.row, self.col, row, col)
         else:
             return None
 
@@ -297,6 +379,7 @@ class Board:
 
         if not correct_coords(row, col) or not correct_coords(row1, col1):
             return False
+
         if row == row1 and col == col1:
             return False  # нельзя пойти в ту же клетку
         piece = self.field[row][col]
