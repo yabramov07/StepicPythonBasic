@@ -94,12 +94,12 @@ class King:
         return self.color
 
     # Возвращает None, если путь невозможен и список клеток, если возможен
-    def can_move(self, row, col):
-        if row < 0 or row > 7 or col < 0 or col > 7:
+    def can_move(self, board, row, col, rowTo, colTo):
+        if rowTo < 0 or rowTo > 7 or colTo < 0 or colTo > 7:
             return None
-        if (self.row + 1 == row or self.row - 1 == row or self.row == row) and \
-                (self.col + 1 == col or self.col - 1 == col or self.col == col):
-            return [row, col]
+        if (row + 1 == rowTo or row - 1 == rowTo or row == rowTo) and \
+                (col + 1 == colTo or col - 1 == colTo or col == colTo):
+            return [rowTo, colTo]
 
 
 class Bishop:  # Слон
@@ -113,7 +113,6 @@ class Bishop:  # Слон
         return self.color
 
     def can_move(self, board, row, col, rowTo, colTo):
-    # def can_move(self, row, col):
         if row < 0 or row > 7 or col < 0 or col > 7:
             return False
         dx = abs(row - rowTo)
@@ -208,11 +207,10 @@ class Board:
             return False
         if piece.get_color() != self.color:
             return False
-        if not piece.can_move(row1, col1):
+        if not piece.can_move(self, row, col, row1, col1):
             return False
         self.field[row][col] = None  # Снять фигуру.
         self.field[row1][col1] = piece  # Поставить на новое место.
-        piece.set_position(row1, col1)
         self.color = opponent(self.color)
         return True
 
@@ -300,4 +298,3 @@ def sign(num):
         return 0
     else:
         return -1
-
