@@ -1,6 +1,3 @@
-# from Pawn import Pawn
-# from Queen import Queen
-
 WHITE = 1
 BLACK = 2
 
@@ -54,82 +51,6 @@ def main():
             print('Координаты некорректы! Попробуйте другой ход!')
 
 
-def ray_1(x, y, row, col):
-    data = []
-    while y != 7:
-        y += 1
-        data.append([x, y])
-        if y == 7 and [row, col] in data:
-            return data
-
-
-def ray_2(x, y, row, col):
-    data = []
-    while x != 7 and y != 7:
-        x += 1
-        y += 1
-        data.append([x, y])
-        if y == 7 and x == 7 and [row, col] in data:
-            return data
-
-
-def ray_3(x, y, row, col):
-    data = []
-    while x != 7:
-        x += 1
-        data.append([x, y])
-        if x == 7 and [row, col] in data:
-            return data
-
-
-def ray_4(x, y, row, col):
-    data = []
-    while x == 7 and y == 0:
-        x += 1
-        y -= 1
-        data.append([x, y])
-        if x == 7 and y == 0 and [row, col] in data:
-            return data
-
-
-def ray_5(x, y, row, col):
-    data = []
-    while y == 0:
-        y -= 1
-        data.append([x, y])
-        if y == 0 and [row, col] in data:
-            return data
-
-
-def ray_6(x, y, row, col):
-    data = []
-    while x == 0 and y == 0:
-        x -= 1
-        y -= 1
-        data.append([x, y])
-        if x == 0 and y == 0 and [row, col] in data:
-            return data
-
-
-def ray_7(x, y, row, col):
-    data = []
-    while x == 0:
-        x -= 1
-        data.append([x, y])
-        if x == 0 and [row, col] in data:
-            return data
-
-
-def ray_8(x, y, row, col):
-    data = []
-    while x == 0 and y == 7:
-        x -= 1
-        y += 1
-        data.append([x, y])
-        if x == 0 and y == 7 and [row, col] in data:
-            return data
-
-
 def correct_coords(row, col):
     """Функция проверяет, что координаты (row, col) лежат
     внутри доски"""
@@ -138,14 +59,8 @@ def correct_coords(row, col):
 
 class Rook:  # Ладья
 
-    def __init__(self, row, col, color):
-        self.row = row
-        self.col = col
+    def __init__(self, color):
         self.color = color
-
-    def set_position(self, row, col):
-        self.row = row
-        self.col = col
 
     def char(self):
         return 'R'
@@ -153,24 +68,18 @@ class Rook:  # Ладья
     def get_color(self):
         return self.color
 
-    def can_move(self, row, col):
+    def can_move(self, board, row, col, rowTo, colTo):
         # Невозможно сделать ход в клетку, которая не лежит в том же ряду
         # или столбце клеток.
-        if self.row != row and self.col != col:
+        if row != rowTo and col != colTo:
             return False
 
         return True
 
 
 class King:
-    def __init__(self, row, col, color):
-        self.row = row
-        self.col = col
+    def __init__(self, color):
         self.color = color
-
-    def set_position(self, row, col):
-        self.row = row
-        self.col = col
 
     def char(self):
         return 'K'
@@ -179,23 +88,17 @@ class King:
         return self.color
 
     # Возвращает None, если путь невозможен и список клеток, если возможен
-    def can_move(self, row, col):
-        if row < 0 or row > 7 or col < 0 or col > 7:
+    def can_move(self, board, row, col, rowTo, colTo):
+        if rowTo < 0 or rowTo > 7 or colTo < 0 or colTo > 7:
             return None
-        if (self.row + 1 == row or self.row - 1 == row or self.row == row) and \
-                (self.col + 1 == col or self.col - 1 == col or self.col == col):
-            return [row, col]
+        if (row + 1 == rowTo or row - 1 == rowTo or row == rowTo) and \
+                (col + 1 == colTo or col - 1 == colTo or col == colTo):
+            return [rowTo, colTo]
 
 
 class Bishop:  # Слон
-    def __init__(self, row, col, color):
-        self.row = row
-        self.col = col
+    def __init__(self, color):
         self.color = color
-
-    def set_position(self, row, col):
-        self.row = row
-        self.col = col
 
     def char(self):
         return 'B'
@@ -203,23 +106,17 @@ class Bishop:  # Слон
     def get_color(self):
         return self.color
 
-    def can_move(self, row, col):
+    def can_move(self, board, row, col, rowTo, colTo):
         if row < 0 or row > 7 or col < 0 or col > 7:
             return False
-        dx = abs(self.row - row)
-        dy = abs(self.col - col)
+        dx = abs(row - rowTo)
+        dy = abs(col - colTo)
         return dx == dy
 
 
 class Pawn:  # Пешка
-    def __init__(self, row, col, color):
-        self.row = row
-        self.col = col
+    def __init__(self, color):
         self.color = color
-
-    def set_position(self, row, col):
-        self.row = row
-        self.col = col
 
     def char(self):
         return 'P'
@@ -227,10 +124,10 @@ class Pawn:  # Пешка
     def get_color(self):
         return self.color
 
-    def can_move(self, row, col):
+    def can_move(self, board, row, col, rowTo, colTo):
         # Пешка может ходить только по вертикали
         # "взятие на проходе" не реализовано
-        if self.col != col:
+        if col != colTo:
             return False
 
         # Пешка может сделать из начального положения ход на 2 клетки
@@ -243,67 +140,19 @@ class Pawn:  # Пешка
             start_row = 6
 
         # ход на 1 клетку
-        if self.row + direction == row:
+        if row + direction == rowTo:
             return True
 
         # ход на 2 клетки из начального положения
-        if self.row == start_row and self.row + 2 * direction == row:
+        if row == start_row and row + 2 * direction == rowTo:
             return True
 
         return False
 
 
-class Queen:  # Ферзь
-    def __init__(self, row, col, color):
-        self.row = row
-        self.col = col
-        self.color = color
-
-    def set_position(self, row, col):
-        self.row = row
-        self.col = col
-
-    def char(self):
-        return 'Q'
-
-    def get_color(self):
-        return self.color
-
-    def can_move(self, row, col):
-        if row < 0 or row > 7 or col < 0 or col > 7:
-            return False
-        dx = abs(self.row - row)
-        dy = abs(self.col - col)
-        if dx == dy or (dx == 0 and dy > 0) or (dx > 0 and dy == 0):
-            if ray_1(self.row, self.col, row, col):
-                return ray_1(self.row, self.col, row, col)
-            elif ray_2(self.row, self.col, row, col):
-                return ray_2(self.row, self.col, row, col)
-            elif ray_3(self.row, self.col, row, col):
-                return ray_3(self.row, self.col, row, col)
-            elif ray_4(self.row, self.col, row, col):
-                return ray_4(self.row, self.col, row, col)
-            elif ray_5(self.row, self.col, row, col):
-                return ray_5(self.row, self.col, row, col)
-            elif ray_6(self.row, self.col, row, col):
-                return ray_6(self.row, self.col, row, col)
-            elif ray_7(self.row, self.col, row, col):
-                return ray_7(self.row, self.col, row, col)
-            elif ray_8(self.row, self.col, row, col):
-                return ray_8(self.row, self.col, row, col)
-        else:
-            return None
-
-
 class Knight:  # Конь
-    def __init__(self, row, col, color):
-        self.row = row
-        self.col = col
+    def __init__(self, color):
         self.color = color
-
-    def set_position(self, row, col):
-        self.row = row
-        self.col = col
 
     def char(self):
         return 'N'
@@ -311,11 +160,11 @@ class Knight:  # Конь
     def get_color(self):
         return self.color
 
-    def can_move(self, row, col):
+    def can_move(self, board, row, col, rowTo, colTo):
         if row < 0 or row > 7 or col < 0 or col > 7:
             return False
-        dx = abs(self.row - row)
-        dy = abs(self.col - col)
+        dx = abs(row - rowTo)
+        dy = abs(col - colTo)
         return dx + dy == 3 and (dx == 1 or dy == 1)
 
 
@@ -325,38 +174,39 @@ class Board:
         self.field = []
         for row in range(8):
             self.field.append([None] * 8)
-        self.field[0][0] = Rook(0, 0, WHITE)
-        self.field[0][1] = Knight(0, 1, WHITE)
-        self.field[0][2] = Bishop(0, 2, WHITE)
-        self.field[0][3] = Queen(0, 3, WHITE)
-        self.field[0][4] = King(0, 4, WHITE)
-        self.field[0][5] = Bishop(0, 5, WHITE)
-        self.field[0][6] = Knight(0, 6, WHITE)
-        self.field[0][7] = Rook(0, 7, WHITE)
-        self.field[1][0] = Pawn(1, 0, WHITE)
-        self.field[1][1] = Pawn(1, 1, WHITE)
-        self.field[1][2] = Pawn(1, 2, WHITE)
-        self.field[1][3] = Pawn(1, 3, WHITE)
-        self.field[1][4] = Pawn(1, 4, WHITE)
-        self.field[1][5] = Pawn(1, 5, WHITE)
-        self.field[1][6] = Pawn(1, 6, WHITE)
-        self.field[1][7] = Pawn(1, 7, WHITE)
-        self.field[7][0] = Rook(7, 0, BLACK)
-        self.field[7][1] = Knight(7, 1, BLACK)
-        self.field[7][2] = Bishop(7, 2, BLACK)
-        self.field[7][3] = Queen(7, 3, BLACK)
-        self.field[7][4] = King(7, 4, BLACK)
-        self.field[7][5] = Bishop(7, 5, BLACK)
-        self.field[7][6] = Knight(7, 6, BLACK)
-        self.field[7][7] = Rook(7, 7, BLACK)
-        self.field[6][0] = Pawn(6, 0, BLACK)
-        self.field[6][1] = Pawn(6, 1, BLACK)
-        self.field[6][2] = Pawn(6, 2, BLACK)
-        self.field[6][3] = Pawn(6, 3, BLACK)
-        self.field[6][4] = Pawn(6, 4, BLACK)
-        self.field[6][5] = Pawn(6, 5, BLACK)
-        self.field[6][6] = Pawn(6, 6, BLACK)
-        self.field[6][7] = Pawn(6, 7, BLACK)
+
+        self.field[0][0] = Rook(WHITE)
+        self.field[0][1] = Knight(WHITE)
+        self.field[0][2] = Bishop(WHITE)
+        self.field[0][3] = Queen(WHITE)
+        self.field[0][4] = King(WHITE)
+        self.field[0][5] = Bishop(WHITE)
+        self.field[0][6] = Knight(WHITE)
+        self.field[0][7] = Rook(WHITE)
+        self.field[1][0] = Pawn(WHITE)
+        self.field[1][1] = Pawn(WHITE)
+        self.field[1][2] = Pawn(WHITE)
+        self.field[1][3] = Pawn(WHITE)
+        self.field[1][4] = Pawn(WHITE)
+        self.field[1][5] = Pawn(WHITE)
+        self.field[1][6] = Pawn(WHITE)
+        self.field[1][7] = Pawn(WHITE)
+        self.field[7][0] = Rook(BLACK)
+        self.field[7][1] = Knight(BLACK)
+        self.field[7][2] = Bishop(BLACK)
+        self.field[7][3] = Queen(BLACK)
+        self.field[7][4] = King(BLACK)
+        self.field[7][5] = Bishop(BLACK)
+        self.field[7][6] = Knight(BLACK)
+        self.field[7][7] = Rook(BLACK)
+        self.field[6][0] = Pawn(BLACK)
+        self.field[6][1] = Pawn(BLACK)
+        self.field[6][2] = Pawn(BLACK)
+        self.field[6][3] = Pawn(BLACK)
+        self.field[6][4] = Pawn(BLACK)
+        self.field[6][5] = Pawn(BLACK)
+        self.field[6][6] = Pawn(BLACK)
+        self.field[6][7] = Pawn(BLACK)
 
     def current_player_color(self):
         return self.color
@@ -379,7 +229,6 @@ class Board:
 
         if not correct_coords(row, col) or not correct_coords(row1, col1):
             return False
-
         if row == row1 and col == col1:
             return False  # нельзя пойти в ту же клетку
         piece = self.field[row][col]
@@ -387,11 +236,10 @@ class Board:
             return False
         if piece.get_color() != self.color:
             return False
-        if not piece.can_move(row1, col1):
+        if not piece.can_move(self, row, col, row1, col1):
             return False
         self.field[row][col] = None  # Снять фигуру.
         self.field[row1][col1] = piece  # Поставить на новое место.
-        piece.set_position(row1, col1)
         self.color = opponent(self.color)
         return True
 
@@ -403,6 +251,9 @@ class Board:
                     return True
 
         return False
+
+    def get_piece(self, row, col):
+        return self.field[row][col]
 
     def __str__(self):
         lines = ['     +----+----+----+----+----+----+----+----+']
@@ -416,3 +267,63 @@ class Board:
 
         return '\n'.join(lines)
 
+
+class Queen:  # Ферзь
+    def __init__(self, color):
+        self.color = color
+
+    def char(self):
+        return 'Q'
+
+    def get_color(self):
+        return self.color
+
+    def can_move(self, board, row, col, rowTo, colTo):
+        # return None
+        if row < 0 or row > 7 or col < 0 or col > 7:
+            return False
+        dx = abs(row - rowTo)
+        dy = abs(col - colTo)
+
+        if dx == dy or (dx == 0 and dy > 0) or (dx > 0 and dy == 0):
+            path = find_path(row, col, sign(rowTo - row), sign(colTo - col), rowTo, colTo)
+
+            # проверяем свободен ли путь
+            if path:
+                for i in range(1, len(path)):
+                    piece = board.get_piece(*path[i])
+                    if piece and i < len(path) - 1:
+                        return False
+
+                    # если это последняя клетка
+                    if i == len(path) - 1:
+                        if piece:
+                            # проверяем что фигуру на последней клетке можно съесть
+                            return piece.get_color() != self.color
+                        else:
+                            return True
+
+        return False
+
+
+def find_path(start_row, start_col, dx, dy, row_to, col_to):
+    path = []
+    for i in range(0, 8):
+        x = start_row + dx * i
+        y = start_col + dy * i
+        if x < 0 or x > 7 or y < 0 or y > 7:
+            return None
+        path.append([x, y])
+        if x == row_to and y == col_to:
+            return path
+
+    return None
+
+
+def sign(num):
+    if num > 0:
+        return 1
+    elif num == 0:
+        return 0
+    else:
+        return -1
